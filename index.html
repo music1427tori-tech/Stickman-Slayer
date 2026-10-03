@@ -1378,15 +1378,15 @@
                 this.type = isBoss ? 'boss' : type;
 
                 // Base stats by Type
-                let baseHp = 20 + (currentStage - 1) * 5;
-                let baseSpeed = 2.2 + Math.random() * 0.8 + (currentStage - 1) * 0.08;
+                let baseHp = 10 + (currentStage - 1) * 2;
+                let baseSpeed = 1.3 + Math.random() * 0.4 + (currentStage - 1) * 0.04;
                 let baseRadius = 16;
                 let baseColor = '#ff3366';
 
                 if (isBoss) {
                     baseRadius = 38 + Math.min(currentStage, 15) * 0.8;
-                    baseHp = 280 + (currentStage - 1) * 35;
-                    baseSpeed = 1.35 + (currentStage - 1) * 0.04;
+                    baseHp = 140 + (currentStage - 1) * 15;
+                    baseSpeed = 0.95 + (currentStage - 1) * 0.02;
                     baseColor = '#ff0044';
                 } else {
                     switch (this.type) {
@@ -2538,7 +2538,7 @@
                         shockwaves.push(new Shockwave(player.x, player.y, 100));
                     }
 
-                    const rawDmg = enemy.isBoss ? (0.5 + (stage - 1) * 0.04) : (0.4 + (stage - 1) * 0.02);
+                    const rawDmg = enemy.isBoss ? (0.2 + (stage - 1) * 0.02) : (0.15 + (stage - 1) * 0.01);
                     player.hp -= rawDmg * player.damageReduction;
                     updateHUD();
 
