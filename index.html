@@ -1109,9 +1109,9 @@
                 // Player Upgrades State
                 this.damage = 35;
                 this.attackRange = 80;
-                this.bulletSpeed = 10;
-                this.bulletRange = 350;
-                this.bulletSize = 5;
+                this.bulletSpeed = 15;
+                this.bulletRange = 400;
+                this.bulletSize = 12;
                 this.bulletPenetrate = false;
                 this.weaponType = 'normal';
                 this.vampire = false;
@@ -2483,7 +2483,7 @@
                 enemies.forEach(enemy => {
                     if (bullet.life <= 0) return;
                     const d = Math.hypot(enemy.x - bullet.x, enemy.y - bullet.y);
-                    if (d < enemy.radius + bullet.size) {
+                    if (d < enemy.radius + bullet.size + 10) {
                         applyBulletHit(enemy, bullet);
                         if (!player.bulletPenetrate) {
                             bullet.life = 0;
