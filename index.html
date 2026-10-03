@@ -596,7 +596,7 @@
             <div class="modal-title">STICKMAN SLAYER</div>
             <div class="modal-subtitle">
                 全15ステージを勝ち抜け！<br>
-                マウス移動で操作し、左クリックで銃撃！<br>
+                矢印キー（↑↓←→）で移動、Fキーで攻撃！<br>
                 ステージが進むごとに敵は凶悪化する！
             </div>
             <button class="btn" id="startBtn">
@@ -670,7 +670,7 @@
             </button>
         </div>
 
-        <div class="controls-hint">操作: マウス移動＝移動 | 左クリック＝射撃🔫</div>
+        <div class="controls-hint">操作: 矢印キー＝移動 | Fキー＝射撃🔫</div>
     </div>
 
     <script>
@@ -830,24 +830,40 @@
         const finalScoreClear = document.getElementById('finalScoreClear');
         const finalKillsClear = document.getElementById('finalKillsClear');
 
-        // Mouse Tracking
-        const mouse = { x: 450, y: 300, isPressed: false };
+        // Keyboard & Input Tracking
+        const keys = {
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false,
+            KeyF: false
+        };
 
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            mouse.x = e.clientX - rect.left;
-            mouse.y = e.clientY - rect.top;
-        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === '1') useBattleItem('bomb');
+            if (e.key === '2') useBattleItem('shield');
+            if (e.key === '3') useBattleItem('freeze');
+            if (e.key === '4') useBattleItem('elixir');
 
-        canvas.addEventListener('mousedown', (e) => {
-            if (e.button === 0) {
-                mouse.isPressed = true;
-                triggerPlayerAttack();
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyF', 'f', 'F'].includes(e.key) || e.code === 'KeyF') {
+                if (e.key.startsWith('Arrow')) {
+                    keys[e.key] = true;
+                    e.preventDefault();
+                }
+                if (e.key === 'f' || e.key === 'F' || e.code === 'KeyF') {
+                    keys.KeyF = true;
+                    e.preventDefault();
+                }
             }
         });
 
-        canvas.addEventListener('mouseup', () => {
-            mouse.isPressed = false;
+        window.addEventListener('keyup', (e) => {
+            if (e.key.startsWith('Arrow')) {
+                keys[e.key] = false;
+            }
+            if (e.key === 'f' || e.key === 'F' || e.code === 'KeyF') {
+                keys.KeyF = false;
+            }
         });
 
         // Game State Variables
@@ -1144,20 +1160,29 @@
                         this.shieldActive = true;
                     }
                 }
-                // Move towards mouse smoothly
-                const dx = mouse.x - this.x;
-                const dy = mouse.y - this.y;
-                const dist = Math.hypot(dx, dy);
+                // Arrow keys movement
+                let moveX = 0;
+                let moveY = 0;
+                if (keys.ArrowUp) moveY -= 1;
+                if (keys.ArrowDown) moveY += 1;
+                if (keys.ArrowLeft) moveX -= 1;
+                if (keys.ArrowRight) moveX += 1;
 
-                this.facingAngle = Math.atan2(dy, dx);
-
-                if (dist > 5) {
-                    const moveDist = Math.min(dist * 0.1, this.speed);
-                    this.x += Math.cos(this.facingAngle) * moveDist;
-                    this.y += Math.sin(this.facingAngle) * moveDist;
+                if (moveX !== 0 || moveY !== 0) {
+                    const len = Math.hypot(moveX, moveY);
+                    const normX = moveX / len;
+                    const normY = moveY / len;
+                    this.x += normX * this.speed;
+                    this.y += normY * this.speed;
+                    this.facingAngle = Math.atan2(normY, normX);
                     this.walkCycle += 0.2;
                 } else {
                     this.walkCycle = 0;
+                }
+
+                // F Key Shooting Trigger
+                if (keys.KeyF) {
+                    triggerPlayerAttack();
                 }
 
                 // Keep inside canvas boundary
