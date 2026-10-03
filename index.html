@@ -2370,7 +2370,7 @@
         // Spawn Enemies logic
         function handleSpawns() {
             const elapsedSec = (Date.now() - stageStartTime) / 1000;
-            const targetKillsForBoss = 12 + Math.floor(stage * 0.8);
+            const targetKillsForBoss = 6 + Math.floor(stage * 0.5);
             
             // Stop spawning new regular enemies after 20s or target kills reached
             if (!stopZakoSpawn && (elapsedSec >= 20.0 || stageKills >= targetKillsForBoss)) {
@@ -2418,15 +2418,15 @@
             // Stop spawning regular enemies when spawn is stopped, warning is active, or boss is present
             if (stopZakoSpawn || isWarningActive || bossSpawned) return;
 
-            // Regular enemies spawn
+            // Regular enemies spawn (spawn slower and with lower max cap)
             enemySpawnTimer++;
-            const spawnInterval = Math.max(18, 40 - (stage - 1) * 1.5);
+            const spawnInterval = Math.max(35, 75 - (stage - 1) * 2);
             if (enemySpawnTimer > spawnInterval) {
                 enemySpawnTimer = 0;
 
                 const regularEnemies = enemies.filter(e => !e.isBoss);
-                if (regularEnemies.length < 35) {
-                    const spawnCount = Math.random() < (0.4 + stage * 0.02) ? 2 : 1;
+                if (regularEnemies.length < 15) {
+                    const spawnCount = 1;
                     for (let i = 0; i < spawnCount; i++) {
                         let sx, sy;
                         if (Math.random() < 0.5) {
